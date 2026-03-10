@@ -1,27 +1,27 @@
-import React, { Suspense, useState } from 'react'
-// import Lazycomponent from './Lazycomponent'
-const Lazycomponent = React.lazy(() => import('./Lazycomponent'))
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
-const App = () => {
-  const [lazy, setLazy] = useState(false)
+import LoginForm from './components/LoginForm'
+import Discover from './pages/Discover'
+import WatchlistPage from './pages/Watchlistpage'
+
+function App () {
+  const { isAuthenticated } = useSelector(state => state.auth)
 
   return (
-    <div className='text-5xl  bg-gray-500 h-screen'>
-      <h2>Lazy Component example</h2>
-      <button
-        className='border rounded font-medium active:scale-95 bg-sky-200 m-2'
-        onClick={() => {
-          setLazy(true)
-        }}
-      >
-        Click here to see
-      </button>
-      {lazy && (
-        <Suspense fallback={<h2>loading...</h2>}>
-          <Lazycomponent />
-        </Suspense>
+    <Routes>
+      {!isAuthenticated ? (
+        <>
+          <Route path='/' element={<LoginForm />} />
+          <Route path='*' element={<Navigate to='/' />} />
+        </>
+      ) : (
+        <>
+          <Route path='/' element={<Discover />} />
+          <Route path='/watchlist' element={<WatchlistPage />} />
+        </>
       )}
-    </div>
+    </Routes>
   )
 }
 
